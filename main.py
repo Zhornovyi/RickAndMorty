@@ -37,19 +37,18 @@ async def main():
     }
     
     async with ClientSession() as session:
-        tasks = [res.fetch_and_save(ResourseLoader(session), './results') for res in resourses.values()]
+        tasks = [res.load_and_save(ResourseLoader(session), './results') for res in resourses.values()]
         logger.debug("The fetching and saving has started")
         start = time.time() 
         await asyncio.gather(*tasks)
         logger.debug("The fetching has finished in %s seconds", time.time() - start)
-
-    # Get all episodes between 2017 and 2021 with more than 3 characters  
+        
     filtered_episodes = {}
+    
     for ep in resourses['episode'].filter_data(keys=["year", "min_characters"], start_year=2017, end_year=2021, min_characters=3):
         filtered_episodes[ep.id] = ep.name
     logger.info("Episodes between %s and %s with more than %s characters: \n%s", 2017, 2021, 3, pprint.pformat(filtered_episodes))
     
-    # Get all characters appeared in odd episodes
     filtered_characters = set()
     for ep in resourses['episode'].filter_data(keys=["odd_episode_nums"]):
         filtered_characters.update(ep.characters)

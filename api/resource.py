@@ -23,7 +23,7 @@ class RickAndMortyResource:
         self.filters = filters
         self.data: List[model_class] = []
 
-    async def fetch(self, loader: ResourseLoader):
+    async def load(self, loader: ResourseLoader):
         res_url = path.join(self.base_url, self.name)
         try:
             raw_data = await loader.fetch_all_pages(res_url)
@@ -51,6 +51,6 @@ class RickAndMortyResource:
             if all(self.filters[key].apply(item, **kwargs) for key in keys):
                 yield item
 
-    async def fetch_and_save(self, loader: ResourseLoader, output_path='./'):
-        await self.fetch(loader)
+    async def load_and_save(self, loader: ResourseLoader, output_path='./'):
+        await self.load(loader)
         await self.save(output_path) 
